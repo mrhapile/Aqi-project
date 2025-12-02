@@ -14,12 +14,7 @@ export const AQI_BANDS = [
  * Using simplified EPA breakpoints.
  */
 export function pm25ToAQI(pm25) {
-    if (pm25 == null) return { aqi: "-", band: "No Data", color: "#cccccc" };
-
-    let aqi = pm25; // Simplified: 1:1 mapping for demo purposes as requested, or standard calculation?
-    // The user asked for "pm25ToAQI(pm25) → returns {aqi, band, color}"
-    // Standard AQI calculation is complex. Let's use a simplified linear scale or standard breakpoints if possible.
-    // Given the "EPA-like bands" requirement, I'll implement a proper piecewise linear interpolation.
+    if (pm25 == null) return { aqi: "-", band: "No Data", color: "#333333" };
 
     // PM2.5 Breakpoints (C_low, C_high, I_low, I_high)
     const breakpoints = [

@@ -7,6 +7,8 @@ import Legend from '../ui/Legend';
 import HistoryModal from '../ui/HistoryModal';
 import { pm25ToAQI } from '../lib/aqi';
 
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
 export default function Dashboard() {
     const [stations, setStations] = useState([]);
     const [selectedStation, setSelectedStation] = useState(null);
@@ -14,7 +16,7 @@ export default function Dashboard() {
     const [lastUpdated, setLastUpdated] = useState(new Date());
 
     const fetchData = () => {
-        axios.get('http://localhost:3000/stations/latest-all')
+        axios.get(`${API_BASE}/stations/latest-all`)
             .then(res => {
                 setStations(res.data);
                 setLastUpdated(new Date());
@@ -29,31 +31,22 @@ export default function Dashboard() {
     }, []);
 
     return (
-        <div style={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden' }}>
+        <div className="dashboard-container">
 
             {/* Sidebar */}
-            <div style={{
-                width: '380px',
-                height: '100%',
-                background: '#f8f9fa',
-                borderRight: '1px solid #ddd',
-                display: 'flex',
-                flexDirection: 'column',
-                zIndex: 1000,
-                boxShadow: '2px 0 10px rgba(0,0,0,0.05)'
-            }}>
-                <div style={{ padding: '20px', borderBottom: '1px solid #eee', background: 'white' }}>
-                    <h1 style={{ margin: 0, fontSize: '24px', color: '#333' }}>AQI Monitor</h1>
-                    <div style={{ fontSize: '12px', color: '#888', marginTop: '5px' }}>
+            <div className="sidebar">
+                <div className="sidebar-header">
+                    <h1 style={{ margin: 0, fontSize: '24px', color: 'var(--text)' }}>AQI Monitor</h1>
+                    <div style={{ fontSize: '12px', color: 'var(--muted)', marginTop: '5px' }}>
                         Updated: {lastUpdated.toLocaleTimeString()}
                     </div>
                 </div>
 
-                <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
+                <div className="sidebar-content">
                     <Gauge stations={stations} />
                     <Legend />
 
-                    <h4 style={{ margin: '0 0 15px 0', color: '#555' }}>Stations</h4>
+                    <h4 style={{ margin: '0 0 15px 0', color: 'var(--muted)' }}>Stations</h4>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                         {stations.map(s => {
                             const { color, aqi, band } = pm25ToAQI(s.pm25);
@@ -62,20 +55,10 @@ export default function Dashboard() {
                             return (
                                 <div
                                     key={s.station_id}
+                                    className={`station-item ${isSelected ? 'selected' : ''}`}
                                     onClick={() => {
                                         setSelectedStation(s);
                                         setHistoryStation(s);
-                                    }}
-                                    style={{
-                                        background: 'white',
-                                        padding: '15px',
-                                        borderRadius: '8px',
-                                        border: isSelected ? '2px solid #007bff' : '1px solid #eee',
-                                        cursor: 'pointer',
-                                        transition: 'all 0.2s',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between'
                                     }}
                                 >
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -83,16 +66,17 @@ export default function Dashboard() {
                                             width: '12px',
                                             height: '12px',
                                             borderRadius: '50%',
-                                            backgroundColor: color
+                                            backgroundColor: color,
+                                            boxShadow: `0 0 5px ${color}60`
                                         }}></div>
                                         <div>
-                                            <div style={{ fontWeight: '600', color: '#333' }}>{s.name}</div>
-                                            <div style={{ fontSize: '12px', color: '#666' }}>{band}</div>
+                                            <div style={{ fontWeight: '600', color: 'var(--text)' }}>{s.name}</div>
+                                            <div style={{ fontSize: '12px', color: 'var(--muted)' }}>{band}</div>
                                         </div>
                                     </div>
                                     <div style={{ textAlign: 'right' }}>
-                                        <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#333' }}>{aqi}</div>
-                                        <div style={{ fontSize: '10px', color: '#888' }}>AQI</div>
+                                        <div style={{ fontSize: '18px', fontWeight: 'bold', color: 'var(--text)' }}>{aqi}</div>
+                                        <div style={{ fontSize: '10px', color: 'var(--muted)' }}>AQI</div>
                                     </div>
                                 </div>
                             );
@@ -102,7 +86,7 @@ export default function Dashboard() {
             </div>
 
             {/* Map Area */}
-            <div style={{ flex: 1, position: 'relative' }}>
+            <div className="map-area">
                 <MapView
                     stations={stations}
                     onSelectStation={setSelectedStation}

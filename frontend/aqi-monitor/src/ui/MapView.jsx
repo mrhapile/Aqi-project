@@ -22,11 +22,11 @@ export default function MapView({ stations, onSelectStation, onViewHistory }) {
         <MapContainer
             center={defaultCenter}
             zoom={11}
-            style={{ height: '100%', width: '100%' }}
+            style={{ height: '100%', width: '100%', background: '#121212' }}
             zoomControl={false}
         >
             <TileLayer
-                url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
             />
 
@@ -40,18 +40,18 @@ export default function MapView({ stations, onSelectStation, onViewHistory }) {
                         key={station.station_id}
                         center={[station.lat, station.lon]}
                         pathOptions={{
-                            color: 'white',
+                            color: '#121212',
                             fillColor: color,
-                            fillOpacity: 0.8,
-                            weight: 2
+                            fillOpacity: 0.9,
+                            weight: 1
                         }}
                         radius={12}
                         eventHandlers={{
                             click: () => onSelectStation(station)
                         }}
                     >
-                        <Popup>
-                            <div style={{ textAlign: 'center' }}>
+                        <Popup className="dark-popup">
+                            <div style={{ textAlign: 'center', color: '#333' }}>
                                 <h3 style={{ margin: '0 0 5px 0', fontSize: '16px' }}>{station.name}</h3>
                                 <div style={{ marginBottom: '10px', fontSize: '14px' }}>
                                     <strong>AQI: {aqi}</strong>

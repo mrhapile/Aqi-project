@@ -20,15 +20,8 @@ export default function Gauge({ stations }) {
     const { band, color } = pm25ToAQI(worstStation?.pm25);
 
     return (
-        <div style={{
-            background: 'white',
-            padding: '20px',
-            borderRadius: '12px',
-            boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
-            marginBottom: '20px',
-            textAlign: 'center'
-        }}>
-            <h3 style={{ margin: '0 0 10px 0', color: '#666', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+        <div className="card" style={{ textAlign: 'center' }}>
+            <h3 style={{ margin: '0 0 10px 0', color: 'var(--muted)', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1px' }}>
                 Worst Air Quality
             </h3>
 
@@ -44,20 +37,21 @@ export default function Gauge({ stations }) {
                         alignItems: 'center',
                         justifyContent: 'center',
                         margin: '0 auto 10px auto',
-                        color: color
+                        color: color,
+                        boxShadow: `0 0 20px ${color}40`
                     }}>
                         <span style={{ fontSize: '32px', fontWeight: 'bold' }}>{maxAQI}</span>
                         <span style={{ fontSize: '12px', fontWeight: '500' }}>AQI</span>
                     </div>
-                    <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#333' }}>
+                    <div style={{ fontSize: '18px', fontWeight: 'bold', color: 'var(--text)' }}>
                         {band}
                     </div>
-                    <div style={{ fontSize: '14px', color: '#888', marginTop: '4px' }}>
+                    <div style={{ fontSize: '14px', color: 'var(--muted)', marginTop: '4px' }}>
                         at {worstStation.name}
                     </div>
                 </>
             ) : (
-                <div style={{ color: '#999', padding: '20px' }}>No Data Available</div>
+                <div style={{ color: 'var(--muted)', padding: '20px' }}>No Data Available</div>
             )}
         </div>
     );

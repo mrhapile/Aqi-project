@@ -15,7 +15,7 @@ app.use(express.json());
 // 1. Get all stations (Basic info)
 app.get("/stations", async (req, res) => {
     try {
-        const result = await pool.query("SELECT * FROM stations");
+        const result = await pool.query("SELECT id, name, lat, lon, source FROM stations");
         res.json(result.rows);
     } catch (err) {
         console.error(err);
@@ -24,10 +24,10 @@ app.get("/stations", async (req, res) => {
 });
 
 // 2. Get all stations WITH their latest reading (Optimized for map)
-// Must be defined BEFORE /stations/:id routes to avoid collision
 app.get("/stations/latest-all", async (req, res) => {
     try {
         // DISTINCT ON (s.id) gets the first row for each station based on the ORDER BY clause
+        // Optimized query for large datasets
         const query = `
             SELECT DISTINCT ON (s.id)
                 s.id AS station_id,
@@ -39,7 +39,7 @@ app.get("/stations/latest-all", async (req, res) => {
                 r.no2,
                 r.timestamp
             FROM stations s
-            LEFT JOIN readings r ON s.id = r.station_id
+            JOIN readings r ON s.id = r.station_id
             ORDER BY s.id, r.timestamp DESC
         `;
         const result = await pool.query(query);
@@ -59,8 +59,6 @@ app.get("/stations/:id/latest", async (req, res) => {
             [id]
         );
         if (result.rows.length === 0) {
-            // Return 404 or just null/empty object depending on frontend expectation.
-            // User spec example shows a JSON object. If empty, maybe 404 is best.
             return res.status(404).json({ error: "No readings found" });
         }
         res.json(result.rows[0]);
